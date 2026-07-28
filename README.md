@@ -36,7 +36,7 @@ A predictive-maintenance proof of concept that pairs **Remaining Useful Life (RU
 | LSTM (RUL regression) | RMSE | 17.80 cycles |
 | LSTM (RUL regression) | MAE | 12.70 cycles |
 | LSTM (RUL regression) | R² | 0.81 |
-| LSTM (RUL regression) | NASA asymmetric scoring function | ~956 (lower is better; penalizes late predictions more heavily than early ones) |
+| LSTM (RUL regression) | NASA asymmetric scoring function | ~956 |
 | CNN autoencoder | Reconstruction-error threshold (95th pct) | 0.90 |
 
 ## Tech stack
