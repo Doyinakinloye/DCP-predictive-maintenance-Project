@@ -39,16 +39,6 @@ A predictive-maintenance proof of concept that pairs **Remaining Useful Life (RU
 | LSTM (RUL regression) | NASA asymmetric scoring function | ~956 (lower is better; penalizes late predictions more heavily than early ones) |
 | CNN autoencoder | Reconstruction-error threshold (95th pct) | 0.90 |
 
-An R² of 0.81 with an MAE of ~12.7 cycles indicates the LSTM captures the broad degradation trend well, though the NASA scoring function — which penalizes *late* (overly optimistic) predictions more steeply than early ones — is a more operationally meaningful metric than RMSE/MAE alone, since underestimating remaining life is far cheaper than a missed failure.
-
-## Known limitations & next steps
-
-- **Risk-score alignment bug (open issue):** the current composite risk-score cell combines `y_pred` (97 test-engine RUL predictions) with `mse_per_sequence_normalized` (827 validation sequences) — these come from different splits and different granularities (per-engine vs. per-sliding-window) and must not be combined element-wise as currently written. Fix requires scoring both models on the **same** sequence set, tagged with matching `unit_number`/window-index metadata, before fusing.
-- **Min-max normalization computed per-batch:** both `rul_pred_normalized` and `mse_per_sequence_normalized` currently rescale using the min/max of whatever batch is being scored, making risk scores non-comparable across runs or datasets. This should be replaced with normalization bounds frozen from the training set (with clipping for out-of-range values at inference).
-- **Risk-weighting (0.6 / 0.4) is currently a modeling choice, not a validated one** — worth sweeping against ROC-AUC once true failure labels are available for the scored sequences.
-- **No held-out validation of the composite risk score against ground truth** — RUL regression and anomaly detection were each validated separately, but the fused risk score itself hasn't yet been checked against actual failure outcomes.
-- **Sensor-to-cement-equipment mapping is illustrative, not validated** — real DCP sensor behavior may differ substantially from turbofan degradation patterns.
-
 ## Tech stack
 
 `Python` · `pandas` / `numpy` · `scikit-learn` (RobustScaler, train_test_split) · `TensorFlow / Keras` (LSTM, Conv1D autoencoder) · `matplotlib` / `seaborn`
